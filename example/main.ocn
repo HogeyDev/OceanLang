@@ -1,0 +1,7 @@
+import "include/io.wv";
+import "include/stdlib.wv";
+
+void main() {
+	int myInt = 69 + 42;
+	exit(myInt);
+}
