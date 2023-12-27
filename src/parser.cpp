@@ -140,6 +140,19 @@ AST::Scope *Parser::scope() {
         this->eat(TOKEN_SEMI);
 
         stmt = imp;
+      } else if (this->currTok.value == "if") {
+        // if statement
+        AST::If *ifStmt = new AST::If();
+
+        this->eat(TOKEN_IDENTIFIER);
+
+        this->eat(TOKEN_LPAREN);
+        ifStmt->condition = this->expression();
+        this->eat(TOKEN_RPAREN);
+
+        ifStmt->body = this->scope();
+
+        stmt         = ifStmt;
       } else {
         // function call, variable assignment
         if (this->peek(1).type == TOKEN_LPAREN) {

@@ -41,6 +41,7 @@ class Argument;
 class Return;
 class Import;
 class Extern;
+class If;
 class IntegerLiteral;
 class StringLiteral;
 class VariableRecall;
@@ -129,7 +130,7 @@ public:
   std::string codegen(DefinedScope *scope) override {
     std::string ret = "";
     for (auto &a : this->arguments) {
-      a->argumentValue->codegen(scope);
+      ret += a->argumentValue->codegen(scope);
       scope->stackSize++;
     }
     ret += "\tcall " + this->functionName + '\n';
@@ -208,6 +209,24 @@ public:
     std::cerr << "Unimplemented external language: " << this->language
               << std::endl;
     exit(1);
+  }
+};
+
+class If : public AST::Statement {
+public:
+  AST::Expression *condition;
+  AST::Scope *body;
+
+  std::string codegen(DefinedScope *scope) override {
+    std::string ret = "";
+
+    ret += this->condition->codegen(scope);
+    std::string labelId = std::to_string(newGlobalLabel());
+    ret += "\tpop rax\n\tcmp rax, 0\n\tje lbl" + labelId + '\n';
+    ret += this->body->codegen(scope);
+    ret += "lbl" + labelId + ":\n";
+
+    return ret;
   }
 };
 

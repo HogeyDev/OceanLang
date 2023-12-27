@@ -43,20 +43,27 @@ global main
 main:
 	push rbp
 	mov rbp, rsp
-	push 4
+	push 41
 	push 3
-	push 11
 	pop rax
 	pop rbx
 	imul rax, rbx
-	pop rbx
-	div rbx
 	push rax
-	push 31
+	push 123
 	pop rax
 	pop rbx
 	sub rax, rbx
 	push rax
+	push 1
+	pop rax
+	pop rbx
+	add rax, rbx
+	cmp rax, 0
+	je lbl0
+	push 42
+	call exit
+lbl0:
+	push 69
 	call exit
 	mov rsp, rbp
 	pop rbp

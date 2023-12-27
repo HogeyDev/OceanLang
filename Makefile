@@ -1,5 +1,5 @@
 CC := g++
-CC_FLAGS := -Werror -Wall -Wpedantic -Wextra -std=c++20 -g
+CC_FLAGS := -Werror -Wpedantic -Wextra -std=c++20 -g
 
 all: compile run
 

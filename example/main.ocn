@@ -2,6 +2,9 @@ import "include/io.wv";
 import "include/stdlib.wv";
 
 void main() {
-	int myInt = 31 - 11 * 3 / 4;
-	exit(myInt);
+	int myInt = 123 - 3 * 41;
+	if (myInt + 1) {
+		exit(42);
+	}
+	exit(69);
 }
