@@ -1,18 +1,23 @@
 CC := g++
-CCARGS := -Wall -Werror -Wpedantic -std=c++20
+CC_FLAGS := -Werror -Wall -Wpedantic -Wextra -std=c++20 -g
 
-.PHONY: clean
-all: clean compile run
+all: compile run
 
 compile:
-	$(CC) src/*.cpp -o build/main -I./src/include $(CCARGS)
+	${CC} ./src/*.cpp -I./src/include/ ${CC_FLAGS} -o ./build/main
 
 run:
 	./build/main example/main.ocn
 
-bear:
-	bear -- make
+debug:
+	gdb --args ./build/main example/main.ocn
 
-clean:
-	rm -rf build
-	mkdir build
+compileAsm:
+	nasm -g -f elf64 example/main.asm -o example/main.o
+	ld -m elf_x86_64 example/main.o -o example/main
+	rm example/main.o
+
+runAsm:
+	./example/main
+
+asm: compileAsm runAsm

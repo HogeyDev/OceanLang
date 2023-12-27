@@ -1,0 +1,18 @@
+extern asm = "
+strlen:
+	push rbp
+	mov rbp, rsp
+
+	mov rsi, [rsp+16]
+	mov rcx, -1
+.strlen0:
+	inc rcx
+	cmp byte [rsi + rcx], 0x00
+	jne .strlen0
+.strlen1:
+	mov rdx, rcx
+
+	mov rsp, rbp
+	pop rbp
+	ret
+";

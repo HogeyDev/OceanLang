@@ -1,4 +1,6 @@
+#pragma once
+
 #include <string>
 
-std::string readFile(const char *filepath);
+std::string readFile(std::string filepath);
 void writeFile(std::string filepath, std::string contents);

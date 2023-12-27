@@ -1,0 +1,21 @@
+import "include/string.wv";
+
+extern asm = "
+print:
+	push rbp
+	mov rbp, rsp
+
+	mov rax, [rsp+16]
+	push rax
+	call strlen
+	add rsp, 8
+
+	mov rax, 1
+	mov rdi, 1
+	mov rsi, [rsp+16]
+	syscall
+
+	mov rsp, rbp
+	pop rbp
+	ret
+";

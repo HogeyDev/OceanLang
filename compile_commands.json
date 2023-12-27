@@ -3,48 +3,54 @@
     "arguments": [
       "/usr/bin/g++",
       "-c",
-      "-I./src/include",
-      "-Wall",
+      "-I./src/include/",
       "-Werror",
+      "-Wall",
       "-Wpedantic",
+      "-Wextra",
       "-std=c++20",
+      "-g",
       "-o",
-      "build/main",
-      "src/compiler.cpp"
+      "./build/main",
+      "./src/compile.cpp"
     ],
     "directory": "/home/kourtet/Programming/OceanLangCollective/C++",
-    "file": "/home/kourtet/Programming/OceanLangCollective/C++/src/compiler.cpp",
+    "file": "/home/kourtet/Programming/OceanLangCollective/C++/src/compile.cpp",
     "output": "/home/kourtet/Programming/OceanLangCollective/C++/build/main"
   },
   {
     "arguments": [
       "/usr/bin/g++",
       "-c",
-      "-I./src/include",
-      "-Wall",
+      "-I./src/include/",
       "-Werror",
+      "-Wall",
       "-Wpedantic",
+      "-Wextra",
       "-std=c++20",
+      "-g",
       "-o",
-      "build/main",
-      "src/error.cpp"
+      "./build/main",
+      "./src/interpreter.cpp"
     ],
     "directory": "/home/kourtet/Programming/OceanLangCollective/C++",
-    "file": "/home/kourtet/Programming/OceanLangCollective/C++/src/error.cpp",
+    "file": "/home/kourtet/Programming/OceanLangCollective/C++/src/interpreter.cpp",
     "output": "/home/kourtet/Programming/OceanLangCollective/C++/build/main"
   },
   {
     "arguments": [
       "/usr/bin/g++",
       "-c",
-      "-I./src/include",
-      "-Wall",
+      "-I./src/include/",
       "-Werror",
+      "-Wall",
       "-Wpedantic",
+      "-Wextra",
       "-std=c++20",
+      "-g",
       "-o",
-      "build/main",
-      "src/io.cpp"
+      "./build/main",
+      "./src/io.cpp"
     ],
     "directory": "/home/kourtet/Programming/OceanLangCollective/C++",
     "file": "/home/kourtet/Programming/OceanLangCollective/C++/src/io.cpp",
@@ -54,14 +60,35 @@
     "arguments": [
       "/usr/bin/g++",
       "-c",
-      "-I./src/include",
-      "-Wall",
+      "-I./src/include/",
       "-Werror",
+      "-Wall",
       "-Wpedantic",
+      "-Wextra",
       "-std=c++20",
+      "-g",
       "-o",
-      "build/main",
-      "src/main.cpp"
+      "./build/main",
+      "./src/lexer.cpp"
+    ],
+    "directory": "/home/kourtet/Programming/OceanLangCollective/C++",
+    "file": "/home/kourtet/Programming/OceanLangCollective/C++/src/lexer.cpp",
+    "output": "/home/kourtet/Programming/OceanLangCollective/C++/build/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-I./src/include/",
+      "-Werror",
+      "-Wall",
+      "-Wpedantic",
+      "-Wextra",
+      "-std=c++20",
+      "-g",
+      "-o",
+      "./build/main",
+      "./src/main.cpp"
     ],
     "directory": "/home/kourtet/Programming/OceanLangCollective/C++",
     "file": "/home/kourtet/Programming/OceanLangCollective/C++/src/main.cpp",
@@ -71,17 +98,57 @@
     "arguments": [
       "/usr/bin/g++",
       "-c",
-      "-I./src/include",
-      "-Wall",
+      "-I./src/include/",
       "-Werror",
+      "-Wall",
       "-Wpedantic",
+      "-Wextra",
       "-std=c++20",
+      "-g",
       "-o",
-      "build/main",
-      "src/tokens.cpp"
+      "./build/main",
+      "./src/parser.cpp"
     ],
     "directory": "/home/kourtet/Programming/OceanLangCollective/C++",
-    "file": "/home/kourtet/Programming/OceanLangCollective/C++/src/tokens.cpp",
+    "file": "/home/kourtet/Programming/OceanLangCollective/C++/src/parser.cpp",
+    "output": "/home/kourtet/Programming/OceanLangCollective/C++/build/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-I./src/include/",
+      "-Werror",
+      "-Wall",
+      "-Wpedantic",
+      "-Wextra",
+      "-std=c++20",
+      "-g",
+      "-o",
+      "./build/main",
+      "./src/scope.cpp"
+    ],
+    "directory": "/home/kourtet/Programming/OceanLangCollective/C++",
+    "file": "/home/kourtet/Programming/OceanLangCollective/C++/src/scope.cpp",
+    "output": "/home/kourtet/Programming/OceanLangCollective/C++/build/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-I./src/include/",
+      "-Werror",
+      "-Wall",
+      "-Wpedantic",
+      "-Wextra",
+      "-std=c++20",
+      "-g",
+      "-o",
+      "./build/main",
+      "./src/token.cpp"
+    ],
+    "directory": "/home/kourtet/Programming/OceanLangCollective/C++",
+    "file": "/home/kourtet/Programming/OceanLangCollective/C++/src/token.cpp",
     "output": "/home/kourtet/Programming/OceanLangCollective/C++/build/main"
   }
 ]

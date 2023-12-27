@@ -1,0 +1,7 @@
+extern asm = "
+exit:
+    mov rax, 60
+    mov rdi, QWORD [rsp+8]
+    add rsp, 8
+    syscall
+";

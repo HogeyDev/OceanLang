@@ -2,3 +2,4 @@ ColumnLimit: 80
 PointerAlignment: Right
 IndentWidth: 2
 AccessModifierOffset: -2
+AlignConsecutiveAssignments: AcrossEmptyLinesAndComments

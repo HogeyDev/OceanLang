@@ -2,6 +2,6 @@ import "include/io.wv";
 import "include/stdlib.wv";
 
 void main() {
-	int myInt = 69 + 42;
+	int myInt = 31 - 11 * 3 / 4;
 	exit(myInt);
 }
