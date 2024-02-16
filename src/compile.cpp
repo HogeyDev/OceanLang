@@ -18,15 +18,22 @@ void interpret(std::string code) {
   // }
 }
 
-std::string compile(std::string code) {
-  std::vector<Token> tokens = Lexer(code).tokenize();
-  AST::Scope *root          = Parser(tokens).parse();
-  std::string compiled      = compileToAsm(root);
-  AsmOptimizer *optimizer   = new AsmOptimizer(compiled);
-  return optimizer->optimize();
+std::string compile(std::string code, DefinedScope *scope) {
+  std::vector<Token> tokens  = Lexer(code).tokenize();
+  AST::Scope *root           = Parser(tokens).parse();
+  std::string compiled       = compileToAsm(root, scope);
+  // AsmOptimizer *optimizer    = new AsmOptimizer(compiled);
+  // compiled                   = optimizer->optimize();
+  AsmSectionGrouper *grouper = new AsmSectionGrouper(compiled);
+  return grouper->group();
+  // return compiled;
 }
 
 void interpretFile(std::string filepath) { interpret(readFile(filepath)); }
+std::string compileFile(std::string filepath, DefinedScope *scope) {
+  return compile(readFile(filepath), scope);
+}
+
 std::string compileFile(std::string filepath) {
-  return compile(readFile(filepath));
+  return compileFile(filepath, new DefinedScope());
 }

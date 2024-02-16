@@ -1,7 +1,8 @@
-extern asm = "
-exit:
-    mov rax, 60
-    mov rdi, QWORD [rsp+8]
-    add rsp, 8
-    syscall
+void exit(int code) {
+	extern asm "
+	mov rax, 60
+	mov rdi, QWORD [rsp+16]
+	add rsp, 8
+	syscall
 ";
+}

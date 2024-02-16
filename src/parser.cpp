@@ -51,7 +51,18 @@ AST::Scope *Parser::scope() {
     if (this->currTok.type == TOKEN_IDENTIFIER) {
       // function declaration, function call, variable declaration, variable
       // assignment, return
-      if (this->peek(1).type == TOKEN_IDENTIFIER) {
+      if (this->currTok.value == "return") {
+        // return statement
+        AST::Return *ret = new AST::Return();
+
+        this->eat(TOKEN_IDENTIFIER);
+
+        ret->returnValue = this->expression();
+
+        this->eat(TOKEN_SEMI);
+
+        stmt = ret;
+      } else if (this->peek(1).type == TOKEN_IDENTIFIER) {
         // function declaration, variable declaration, return
         if (this->currTok.value == "extern") {
           // extern statement
@@ -61,8 +72,6 @@ AST::Scope *Parser::scope() {
 
           ext->language = this->currTok.value;
           this->eat(TOKEN_IDENTIFIER);
-
-          this->eat(TOKEN_EQUALS);
 
           ext->source = this->currTok.value;
           this->eat(TOKEN_STRING);
@@ -117,17 +126,6 @@ AST::Scope *Parser::scope() {
 
           stmt = varDecl;
         }
-      } else if (this->currTok.value == "return") {
-        // return statement
-        AST::Return *ret = new AST::Return();
-
-        this->eat(TOKEN_IDENTIFIER);
-
-        ret->returnValue = this->expression();
-
-        this->eat(TOKEN_SEMI);
-
-        stmt = ret;
       } else if (this->currTok.value == "import") {
         // import statement
         AST::Import *imp = new AST::Import();
@@ -153,6 +151,17 @@ AST::Scope *Parser::scope() {
         ifStmt->body = this->scope();
 
         stmt         = ifStmt;
+      } else if (this->currTok.value == "while") {
+        AST::While *whileStmt = new AST::While();
+
+        this->eat(TOKEN_IDENTIFIER);
+        this->eat(TOKEN_LPAREN);
+        whileStmt->condition = this->expression();
+        this->eat(TOKEN_RPAREN);
+
+        whileStmt->body = this->scope();
+
+        stmt            = whileStmt;
       } else {
         // function call, variable assignment
         if (this->peek(1).type == TOKEN_LPAREN) {
@@ -210,18 +219,30 @@ AST::Expression *Parser::comparison() {
   AST::Expression *lhs = this->term();
 
   while (this->currTok.type == TOKEN_EQUALS_EQUALS ||
-         this->currTok.type == TOKEN_BANG_EQUALS) {
+         this->currTok.type == TOKEN_BANG_EQUALS ||
+         this->currTok.type == TOKEN_LESS_THAN ||
+         this->currTok.type == TOKEN_MORE_THAN ||
+         this->currTok.type == TOKEN_LESS_THAN_EQUALS ||
+         this->currTok.type == TOKEN_MORE_THAN_EQUALS) {
     this->advance();
     AST::BinaryExpression *c = new AST::BinaryExpression();
     if (this->peek(-1).type == TOKEN_EQUALS_EQUALS) {
       c->op = OP_EQ;
     } else if (this->peek(-1).type == TOKEN_BANG_EQUALS) {
       c->op = OP_NEQ;
+    } else if (this->peek(-1).type == TOKEN_LESS_THAN) {
+      c->op = OP_LT;
+    } else if (this->peek(-1).type == TOKEN_MORE_THAN) {
+      c->op = OP_GT;
+    } else if (this->peek(-1).type == TOKEN_LESS_THAN_EQUALS) {
+      c->op = OP_LTEQ;
+    } else if (this->peek(-1).type == TOKEN_MORE_THAN_EQUALS) {
+      c->op = OP_GTEQ;
     } else {
       exit(51);
     }
-    c->lhs = this->term();
-    c->rhs = lhs;
+    c->lhs = lhs;
+    c->rhs = this->term();
 
     lhs    = c;
   }
@@ -243,8 +264,8 @@ AST::Expression *Parser::term() {
     } else {
       exit(51);
     }
-    t->lhs = this->factor();
-    t->rhs = lhs;
+    t->lhs = lhs;
+    t->rhs = this->factor();
 
     lhs    = t;
   }
@@ -266,8 +287,8 @@ AST::Expression *Parser::factor() {
     } else {
       exit(51);
     }
-    f->lhs = this->unary();
-    f->rhs = lhs;
+    f->lhs = lhs;
+    f->rhs = this->unary();
 
     lhs    = f;
   }
@@ -308,6 +329,23 @@ AST::Expression *Parser::primary() {
     this->eat(TOKEN_STRING);
     return strLit;
   } else if (this->currTok.type == TOKEN_IDENTIFIER) {
+    if (this->peek(1).type == TOKEN_LPAREN) {
+      AST::FunctionCall *funcCall = new AST::FunctionCall();
+      funcCall->functionName      = this->currTok.value;
+      this->eat(TOKEN_IDENTIFIER);
+      this->eat(TOKEN_LPAREN);
+      while (this->currTok.type != TOKEN_RPAREN) {
+        AST::Argument *arg = new AST::Argument();
+
+        arg->argumentValue = this->expression();
+
+        funcCall->arguments.push_back(arg);
+        if (this->currTok.type != TOKEN_RPAREN)
+          this->eat(TOKEN_COMMA);
+      }
+      this->eat(TOKEN_RPAREN);
+      return funcCall;
+    }
     AST::VariableRecall *varRec = new AST::VariableRecall();
     varRec->variableName        = this->currTok.value;
     this->eat(TOKEN_IDENTIFIER);

@@ -10,6 +10,5 @@ int getGlobalLabelCount() { return globalLabelCount; }
 int newGlobalLabel() {
   int lblC = globalLabelCount;
   globalLabelCount++;
-  globalLabelCount = 12;
   return lblC;
 }

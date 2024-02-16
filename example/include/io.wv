@@ -1,21 +1,20 @@
 import "include/string.wv";
 
-extern asm = "
-print:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rsp+16]
-	push rax
-	call strlen
+void print(str message) {
+	extern asm "
+	push QWORD [rsp+16]
+	call _strlen
 	add rsp, 8
-
+	push rax
 	mov rax, 1
 	mov rdi, 1
+	pop rdx
 	mov rsi, [rsp+16]
 	syscall
-
-	mov rsp, rbp
-	pop rbp
-	ret
 ";
+}
+
+void println(str message) {
+	print(message);
+	print("\n");
+}

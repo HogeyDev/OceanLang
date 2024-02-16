@@ -1,10 +1,15 @@
 import "include/io.wv";
 import "include/stdlib.wv";
 
-void main() {
-	int myInt = 123 - 3 * 41;
-	if (myInt + 1) {
-		exit(42);
+int fib(int n) {
+	if (n < 3) {
+		return 1;
 	}
-	exit(69);
+	return fib(n - 1) + fib(n - 2);
+}
+
+int main() {
+	int fibResult = fib(3);
+	exit(fibResult);
+	return 0;
 }

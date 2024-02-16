@@ -11,8 +11,10 @@ class Lexer {
 public:
   Lexer(std::string contents);
   void skipWhitespace();
+  void skipComment();
   Token advanceWith(TokenType type);
   Token nextToken();
   std::vector<Token> tokenize();
-  char get();
+  char get(int index);
+  char peek(int offset = 1);
 };
