@@ -52,12 +52,12 @@ _exit:
 	mov rsp, rbp
 	pop rbp
 	ret
-global _fib
-_fib:
+global _reassignmentTest
+_reassignmentTest:
 	push rbp
 	mov rbp, rsp
 	push QWORD [rsp+16]
-	push 3
+	push 5
 	pop rbx
 	pop rax
 	cmp rax, rbx
@@ -67,34 +67,13 @@ _fib:
 	pop rax
 	cmp rax, 0
 	je lbl0
-	push 1
+	push QWORD [rsp+16]
 	pop rax
 	mov rsp, rbp
 	pop rbp
 	ret
 lbl0:
-	push QWORD [rsp+16]
-	push 1
-	pop rbx
-	pop rax
-	sub rax, rbx
-	push rax
-	call _fib
-	add rsp, 8
-	push rax
-	push QWORD [rsp+32]
-	push 2
-	pop rbx
-	pop rax
-	sub rax, rbx
-	push rax
-	call _fib
-	add rsp, 8
-	push rax
-	pop rbx
-	pop rax
-	add rax, rbx
-	push rax
+	push 5
 	pop rax
 	mov rsp, rbp
 	pop rbp
@@ -106,14 +85,9 @@ global _main
 _main:
 	push rbp
 	mov rbp, rsp
-	push 3
-	call _fib
-	add rsp, 8
+	call _reassignmentTest
+	add rsp, 0
 	push rax
-	push QWORD [rsp+16]
-	call _exit
-	add rsp, 8
-	push 0
 	pop rax
 	mov rsp, rbp
 	pop rbp

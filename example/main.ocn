@@ -1,15 +1,14 @@
 import "include/io.wv";
 import "include/stdlib.wv";
 
-int fib(int n) {
-	if (n < 3) {
-		return 1;
+int reassignmentTest(int n) {
+	int returnValue = 1;
+	if (n > 5) {
+		returnValue = 2;
 	}
-	return fib(n - 1) + fib(n - 2);
+	return returnValue;
 }
 
 int main() {
-	int fibResult = fib(3);
-	exit(fibResult);
-	return 0;
+	return reassignmentTest(6);
 }

@@ -186,6 +186,8 @@ AST::Scope *Parser::scope() {
           this->eat(TOKEN_SEMI);
 
           stmt = funcCall;
+        } else if (this->peek(1).type == TOKEN_EQUALS) {
+          // AST::VariableDeclaration // TODO!!!
         }
       }
     }

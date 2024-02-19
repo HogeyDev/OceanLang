@@ -1,4 +1,5 @@
 #include "ast.h"
+#include <iostream>
 
 namespace AST {
 
@@ -14,8 +15,8 @@ std::string Scope::codegen(DefinedScope *scope) {
 
 std::string VariableDeclaration::codegen(DefinedScope *scope) {
   std::string ret = "";
-  scope->createVariable(this->variableName, this->variableType);
   ret += this->value->codegen(scope);
+  scope->createVariable(this->variableName, this->variableType);
   return ret;
 }
 
@@ -41,10 +42,10 @@ std::string FunctionDeclaration::codegen(DefinedScope *scope) {
     AST::Parameter *p = this->parameters.at(i);
     functionScope->createVariable(p->parameterName, p->parameterType);
   } // parameters are pushed to stack before call
+  functionScope->stackSize++;
   ret += "global _" + this->functionName + '\n';
   ret += "_" + this->functionName + ":\n";
   ret += functionScope->push("rbp") + "\tmov rbp, rsp\n";
-  functionScope->stackSize++;
   ret += this->functionBody->codegen(functionScope);
   ret += "\tmov rsp, rbp\n" + functionScope->pop("rbp") + "\tret\n";
 
@@ -69,6 +70,7 @@ std::string FunctionCall::codegen(DefinedScope *scope) {
   scope->stackSize -= popCount;
   ret += "\tadd rsp, " + std::to_string(8 * popCount) + '\n';
   if (functionData.at(1) != "void") {
+    // ret += "\tpush rax\n"
     ret += scope->push("rax");
   }
   return ret;
@@ -146,13 +148,22 @@ std::string Extern::codegen(DefinedScope *scope) {
 }
 
 std::string If::codegen(DefinedScope *scope) {
-  std::string ret = "";
+  std::string ret       = "";
 
-  ret += this->condition->codegen(scope);
+  DefinedScope *ifScope = new DefinedScope();
+  ifScope->inheritStrings(scope);
+  ifScope->functions  = scope->functions;
+  ifScope->variables  = scope->variables;
+  ifScope->stackSize  = scope->stackSize;
   std::string labelId = std::to_string(newGlobalLabel());
-  ret += scope->pop("rax");
+  ret += this->condition->codegen(ifScope);
+  ret += ifScope->pop("rax");
+  /*
+   * TODO: export all { ... } into a scope that starts with "push rbp..." and
+   * ends with "...pop rbp"
+   * */
   ret += "\tcmp rax, 0\n\tje lbl" + labelId + '\n';
-  ret += this->body->codegen(scope);
+  ret += this->body->codegen(ifScope);
   ret += "lbl" + labelId + ":\n";
 
   return ret;
