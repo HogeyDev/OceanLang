@@ -9,10 +9,6 @@ DefinedScope::DefinedScope() {
 }
 
 bool DefinedScope::hasVariable(std::string name) {
-  // std::cout << this->stackSize << std::endl;
-  // for (std::vector<std::string> var : this->variables) {
-  //   std::cout << var[1] << " " << var[0] << " @ " << var[2] << std::endl;
-  // }
   for (std::vector<std::string> v : this->variables) {
     if (v[0] == name)
       return true;
@@ -25,13 +21,9 @@ void DefinedScope::createVariable(std::string name, std::string type) {
     std::cerr << "Variable \'" << name << "\' already exists" << std::endl;
     exit(1);
   }
-  this->stackSize++;
+  // this->stackSize++;
   std::vector<std::string> var = {name, type, std::to_string(this->stackSize)};
   this->variables.push_back(var);
-  // std::cout << this->stackSize << std::endl;
-  // for (std::vector<std::string> var : this->variables) {
-  //   std::cout << var[1] << " " << var[0] << " @ " << var[2] << std::endl;
-  // }
 }
 
 std::string DefinedScope::getVariableType(std::string name) {
@@ -39,10 +31,6 @@ std::string DefinedScope::getVariableType(std::string name) {
 }
 
 int DefinedScope::getVariableIndex(std::string name) {
-  // std::cout << this->stackSize << std::endl;
-  // for (std::vector<std::string> var : this->variables) {
-  //   std::cout << var[1] << " " << var[0] << " @ " << var[2] << std::endl;
-  // }
   for (std::vector<std::string> &v : this->variables) {
     if (v[0] == name)
       return this->stackSize - std::stoi(v[2]);

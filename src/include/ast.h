@@ -72,6 +72,14 @@ public:
   std::string codegen(DefinedScope *scope);
 };
 
+class VariableAssignment : public AST::Statement {
+public:
+  std::string variableName;
+  AST::Expression *value;
+
+  std::string codegen(DefinedScope *scope);
+};
+
 class Parameter {
 public:
   std::string parameterType;

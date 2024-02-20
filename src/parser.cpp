@@ -187,7 +187,19 @@ AST::Scope *Parser::scope() {
 
           stmt = funcCall;
         } else if (this->peek(1).type == TOKEN_EQUALS) {
-          // AST::VariableDeclaration // TODO!!!
+          // variable assignment
+          AST::VariableAssignment *varAssign =
+              new AST::VariableAssignment(); // TODO!!!
+
+          varAssign->variableName = this->currTok.value;
+          this->eat(TOKEN_IDENTIFIER);
+
+          this->eat(TOKEN_EQUALS);
+          varAssign->value = this->expression();
+
+          this->eat(TOKEN_SEMI);
+
+          stmt = varAssign;
         }
       }
     }

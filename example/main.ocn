@@ -2,13 +2,21 @@ import "include/io.wv";
 import "include/stdlib.wv";
 
 int reassignmentTest(int n) {
-	int returnValue = 1;
-	if (n > 5) {
-		returnValue = 2;
+	int returnValue = 69;
+	if (n > 99) {
+		returnValue = 42;
 	}
 	return returnValue;
 }
 
+int fib(int n) {
+	if (n < 3) {
+		return 1;
+	}
+	return fib(n - 1) + fib(n - 2);
+}
+
 int main() {
-	return reassignmentTest(6);
+	return reassignmentTest(14);
+	exit(fib(13));
 }

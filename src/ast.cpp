@@ -1,5 +1,6 @@
 #include "ast.h"
 #include <iostream>
+#include <string>
 
 namespace AST {
 
@@ -17,6 +18,17 @@ std::string VariableDeclaration::codegen(DefinedScope *scope) {
   std::string ret = "";
   ret += this->value->codegen(scope);
   scope->createVariable(this->variableName, this->variableType);
+  return ret;
+}
+
+std::string VariableAssignment::codegen(DefinedScope *scope) {
+  std::string ret = "";
+  ret += this->value->codegen(scope);
+  ret += scope->pop("rax");
+  int variableIndex = scope->getVariableIndex(this->variableName);
+  ret += "\tmov QWORD [rsp+" + std::to_string(8 * variableIndex) + "], rax\n";
+  // ret += "\tadd rsp, 8\n";
+  // scope->stackSize--;
   return ret;
 }
 
