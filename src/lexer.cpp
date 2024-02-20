@@ -23,9 +23,9 @@ void Lexer::skipComment() {
 
 Token Lexer::nextToken() {
   this->skipWhitespace();
-  if (std::isalpha(this->peek(0))) {
+  if (std::isalpha(this->peek(0)) || this->peek(0) == '_') {
     std::string value;
-    while (std::isalnum(this->peek(0))) {
+    while (std::isalnum(this->peek(0)) || this->peek(0) == '_') {
       value += this->peek(0);
       this->index++;
     }

@@ -130,24 +130,30 @@ lbl1:
 	mov rsp, rbp
 	pop rbp
 	ret
+global _underscore_test
+_underscore_test:
+	push rbp
+	mov rbp, rsp
+	push 44
+	pop rax
+	mov rsp, rbp
+	pop rbp
+	ret
+	mov rsp, rbp
+	pop rbp
+	ret
 global _main
 _main:
 	push rbp
 	mov rbp, rsp
-	push 14
-	call _reassignmentTest
+	push 13
+	call _fib
 	add rsp, 8
 	push rax
 	pop rax
 	mov rsp, rbp
 	pop rbp
 	ret
-	push 13
-	call _fib
-	add rsp, 8
-	push rax
-	call _exit
-	add rsp, 8
 	mov rsp, rbp
 	pop rbp
 	ret

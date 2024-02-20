@@ -30,6 +30,8 @@ typedef enum {
 typedef struct {
   TokenType type;
   std::string value;
+  // int line;
+  // int column;
 } Token;
 
 std::string printableTokenType(TokenType type);

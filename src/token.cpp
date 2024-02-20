@@ -31,7 +31,12 @@ std::string printableTokenType(TokenType type) {
 
 std::string printableToken(Token token) {
   std::string printable = "";
+  // printable += "{ line: ";
+  // printable += token.line;
+  // printable += ", column: ";
+  // printable += token.column;
   printable += "{ type: ";
+  // printable += ", type: ";
   printable += printableTokenType(token.type);
   printable += ", value: " + token.value + " }";
   return printable;
