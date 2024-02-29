@@ -12,9 +12,12 @@ public:
   Lexer(std::string contents);
   void skipWhitespace();
   void skipComment();
+  void advance();
   Token advanceWith(TokenType type);
   Token nextToken();
   std::vector<Token> tokenize();
   char get(int index);
   char peek(int offset = 1);
+  int line;
+  int column;
 };

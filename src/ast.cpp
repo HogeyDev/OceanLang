@@ -7,10 +7,12 @@ namespace AST {
 std::string Scope::codegen(DefinedScope *scope) {
   std::string ret        = "";
   DefinedScope *subScope = scope->newSubScope();
+  ret += subScope->push("rbp") + "\tmov rbp, rsp\n";
   for (AST::Statement *stmt : this->statements) {
     ret += stmt->codegen(subScope);
   }
   scope->inheritStrings(subScope);
+  ret += "\tmov rsp, rbp\n" + subScope->pop("rbp");
   return ret;
 }
 
@@ -57,9 +59,8 @@ std::string FunctionDeclaration::codegen(DefinedScope *scope) {
   functionScope->stackSize++;
   ret += "global _" + this->functionName + '\n';
   ret += "_" + this->functionName + ":\n";
-  ret += functionScope->push("rbp") + "\tmov rbp, rsp\n";
   ret += this->functionBody->codegen(functionScope);
-  ret += "\tmov rsp, rbp\n" + functionScope->pop("rbp") + "\tret\n";
+  ret += "\tret\n";
 
   return ret;
 }
@@ -106,7 +107,10 @@ std::string BinaryExpression::codegen(DefinedScope *scope) {
     ret += "\timul rax, rbx\n";
     break;
   case OP_DIV:
-    ret += "\tdiv rbx\n";
+    ret += "\tmov rdx, 0\n\tdiv rbx\n";
+    break;
+  case OP_MOD:
+    ret += "\tmov rdx, 0\n\tdiv rbx\n\tmov rax, rdx\n";
     break;
   // case OP_EQ:
   // case OP_NEQ:
@@ -122,8 +126,14 @@ std::string BinaryExpression::codegen(DefinedScope *scope) {
   case OP_GTEQ:
     ret += "\tcmp rax, rbx\n\tsetge al\n\tmovzx rax, al\n";
     break;
-  // case OP_NEG:
-  // case OP_INV:
+  // case OP_NEG: // TODO
+  // case OP_INV: // TODO
+  case OP_OR:
+    ret += "\tor rax, rbx\n";
+    break;
+  case OP_AND:
+    ret += "\tand rax, rbx\n";
+    break;
   default:
     std::cerr << "Unimplemented op: " << this->op << std::endl;
     exit(1);
@@ -190,7 +200,22 @@ std::string While::codegen(DefinedScope *scope) {
   ret += scope->pop("rax");
   ret += "\tcmp rax, 0\n\tje lbl" + endLabel + '\n';
   ret += this->body->codegen(scope);
-  ret += "jmp lbl" + startLabel + '\n';
+  ret += "\tjmp lbl" + startLabel + '\n';
+  ret += "lbl" + endLabel + ":\n";
+  return ret;
+}
+
+std::string For::codegen(DefinedScope *scope) {
+  std::string ret        = "";
+  std::string startLabel = std::to_string(newGlobalLabel());
+  std::string endLabel   = std::to_string(newGlobalLabel());
+  ret += this->initialize->codegen(scope);
+  ret += "lbl" + startLabel + ":\n";
+  ret += this->test->codegen(scope);
+  ret += scope->pop("rax");
+  ret += "\tcmp rax, 0\n\tje lbl" + endLabel + '\n';
+  ret += this->body->codegen(scope);
+  ret += "\tjmp lbl" + startLabel + '\n';
   ret += "lbl" + endLabel + ":\n";
   return ret;
 }

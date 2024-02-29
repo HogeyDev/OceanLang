@@ -23,7 +23,7 @@ Token Parser::advance() {
 
 Token Parser::get(int index) {
   if (index < 0 || index >= (int)this->tokenList.size())
-    return {TOKEN_EOF, ""};
+    return {TOKEN_EOF, "", -1, -1};
   return this->tokenList[index];
 }
 
@@ -162,6 +162,27 @@ AST::Scope *Parser::scope() {
         whileStmt->body = this->scope();
 
         stmt            = whileStmt;
+      } else if (this->currTok.value == "for") {
+        AST::For *forStmt = new AST::For();
+
+        this->eat(TOKEN_IDENTIFIER);
+        this->eat(TOKEN_LPAREN);
+        AST::VariableAssignment *varAssign = new AST::VariableAssignment();
+        varAssign->variableName            = this->currTok.value;
+        this->eat(TOKEN_IDENTIFIER);
+        this->eat(TOKEN_EQUALS);
+        varAssign->value    = this->expression();
+        forStmt->initialize = varAssign;
+        this->eat(TOKEN_SEMI);
+
+        forStmt->test = this->expression();
+        this->eat(TOKEN_SEMI);
+
+        this->eat(TOKEN_RPAREN);
+
+        forStmt->body = this->scope();
+
+        stmt          = forStmt;
       } else {
         // function call, variable assignment
         if (this->peek(1).type == TOKEN_LPAREN) {
@@ -188,10 +209,9 @@ AST::Scope *Parser::scope() {
           stmt = funcCall;
         } else if (this->peek(1).type == TOKEN_EQUALS) {
           // variable assignment
-          AST::VariableAssignment *varAssign =
-              new AST::VariableAssignment(); // TODO!!!
+          AST::VariableAssignment *varAssign = new AST::VariableAssignment();
 
-          varAssign->variableName = this->currTok.value;
+          varAssign->variableName            = this->currTok.value;
           this->eat(TOKEN_IDENTIFIER);
 
           this->eat(TOKEN_EQUALS);
@@ -227,7 +247,28 @@ AST::Scope *Parser::scope() {
   return ast;
 }
 
-AST::Expression *Parser::expression() { return this->comparison(); }
+AST::Expression *Parser::expression() {
+  AST::Expression *lhs = this->comparison();
+
+  while (this->currTok.type == TOKEN_PIPE_PIPE ||
+         this->currTok.type == TOKEN_AND_AND) {
+    this->advance();
+    AST::BinaryExpression *c = new AST::BinaryExpression();
+    if (this->peek(-1).type == TOKEN_PIPE_PIPE) {
+      c->op = OP_OR;
+    } else if (this->peek(-1).type == TOKEN_AND_AND) {
+      c->op = OP_AND;
+    } else {
+      exit(51);
+    }
+    c->lhs = lhs;
+    c->rhs = this->comparison();
+
+    lhs    = c;
+  }
+
+  return lhs;
+}
 
 AST::Expression *Parser::comparison() {
   AST::Expression *lhs = this->term();
@@ -291,13 +332,16 @@ AST::Expression *Parser::factor() {
   AST::Expression *lhs = this->unary();
 
   while (this->currTok.type == TOKEN_STAR ||
-         this->currTok.type == TOKEN_SLASH) {
+         this->currTok.type == TOKEN_SLASH ||
+         this->currTok.type == TOKEN_PERCENT) {
     this->advance();
     AST::BinaryExpression *f = new AST::BinaryExpression();
     if (this->peek(-1).type == TOKEN_STAR) {
       f->op = OP_MUL;
     } else if (this->peek(-1).type == TOKEN_SLASH) {
       f->op = OP_DIV;
+    } else if (this->peek(-1).type == TOKEN_PERCENT) {
+      f->op = OP_MOD;
     } else {
       exit(51);
     }

@@ -13,6 +13,7 @@ typedef enum {
   OP_SUB, // -
   OP_MUL, // *
   OP_DIV, // /
+  OP_MOD, // %
 
   // Comparison
   OP_EQ,   // ==
@@ -25,6 +26,9 @@ typedef enum {
   // Unary
   OP_NEG, // -
   OP_INV, // !
+
+  OP_OR,  // ||
+  OP_AND, // &&
 } BinOp;
 
 namespace AST {
@@ -152,6 +156,16 @@ public:
 class While : public AST::Statement {
 public:
   AST::Expression *condition;
+  AST::Scope *body;
+
+  std::string codegen(DefinedScope *scope);
+};
+
+class For : public AST::Statement {
+public:
+  AST::VariableAssignment *initialize;
+  AST::Expression *test;
+  AST::Expression *update;
   AST::Scope *body;
 
   std::string codegen(DefinedScope *scope);

@@ -22,11 +22,14 @@ std::string compile(std::string code, DefinedScope *scope) {
   std::vector<Token> tokens  = Lexer(code).tokenize();
   AST::Scope *root           = Parser(tokens).parse();
   std::string compiled       = compileToAsm(root, scope);
-  // AsmOptimizer *optimizer    = new AsmOptimizer(compiled);
   // compiled                   = optimizer->optimize();
   AsmSectionGrouper *grouper = new AsmSectionGrouper(compiled);
-  return grouper->group();
+  std::string grouped        = grouper->group();
+  // AsmOptimizer *optimizer    = new AsmOptimizer(grouped);
+  // compiled                   = optimizer->optimize();
+
   // return compiled;
+  return grouped;
 }
 
 void interpretFile(std::string filepath) { interpret(readFile(filepath)); }

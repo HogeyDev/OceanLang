@@ -66,9 +66,10 @@ DefinedScope *DefinedScope::newSubScope() {
   DefinedScope *sub = new DefinedScope();
   sub->inheritStrings(this);
   sub->functions = this->functions;
-  for (std::vector<std::string> v : this->variables) {
-    sub->variables.push_back(v);
-  }
+  // for (std::vector<std::string> v : this->variables) {
+  //   sub->variables.push_back(v);
+  // }
+  sub->variables = this->variables;
 
   sub->stackSize = this->stackSize;
   return sub;

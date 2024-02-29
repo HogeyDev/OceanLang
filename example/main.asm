@@ -1,4 +1,10 @@
 section .text
+	push rbp
+	mov rbp, rsp
+	push rbp
+	mov rbp, rsp
+	push rbp
+	mov rbp, rsp
 _strlen:
 	push rbp
 	mov rbp, rsp
@@ -12,6 +18,23 @@ _strlen:
 	mov rsp, rbp
 	pop rbp
 	ret
+	mov rsp, rbp
+	pop rbp
+	push rbp
+	mov rbp, rsp
+global _exit
+_exit:
+	push rbp
+	mov rbp, rsp
+	mov rax, 60
+	mov rdi, QWORD [rsp+16]
+	add rsp, 8
+	syscall
+	mov rsp, rbp
+	pop rbp
+	ret
+	mov rsp, rbp
+	pop rbp
 global _print
 _print:
 	push rbp
@@ -28,6 +51,20 @@ _print:
 	mov rsp, rbp
 	pop rbp
 	ret
+global _print_char
+_print_char:
+	push rbp
+	mov rbp, rsp
+	push QWORD [rsp+16]
+	mov rax, 1
+	mov rdi, 1
+	mov rdx, 1
+	mov rsi, rsp
+	syscall
+	add rsp, 8
+	mov rsp, rbp
+	pop rbp
+	ret
 global _println
 _println:
 	push rbp
@@ -35,57 +72,18 @@ _println:
 	push QWORD [rsp+16]
 	call _print
 	add rsp, 8
-	push STR0
-	call _print
+	push 10
+	call _print_char
 	add rsp, 8
 	mov rsp, rbp
 	pop rbp
 	ret
-global _exit
-_exit:
-	push rbp
-	mov rbp, rsp
-	mov rax, 60
-	mov rdi, QWORD [rsp+16]
-	add rsp, 8
-	syscall
-	mov rsp, rbp
-	pop rbp
-	ret
-global _reassignmentTest
-_reassignmentTest:
-	push rbp
-	mov rbp, rsp
-	push 69
-	push QWORD [rsp+24]
-	push 99
-	pop rbx
-	pop rax
-	cmp rax, rbx
-	setg al
-	movzx rax, al
-	push rax
-	pop rax
-	cmp rax, 0
-	je lbl0
-	push 42
-	pop rax
-	mov QWORD [rsp+0], rax
-lbl0:
-	push QWORD [rsp+0]
-	pop rax
-	mov rsp, rbp
-	pop rbp
-	ret
-	mov rsp, rbp
-	pop rbp
-	ret
-global _fib
-_fib:
+global _print_number
+_print_number:
 	push rbp
 	mov rbp, rsp
 	push QWORD [rsp+16]
-	push 3
+	push 1
 	pop rbx
 	pop rax
 	cmp rax, rbx
@@ -94,62 +92,92 @@ _fib:
 	push rax
 	pop rax
 	cmp rax, 0
-	je lbl1
-	push 1
-	pop rax
+	je lbl0
+	push rbp
+	mov rbp, rsp
+	push 48
+	call _print_char
+	add rsp, 8
 	mov rsp, rbp
 	pop rbp
-	ret
-lbl1:
+lbl0:
 	push QWORD [rsp+16]
-	push 1
+	push 0
 	pop rbx
 	pop rax
-	sub rax, rbx
+	cmp rax, rbx
+	setg al
+	movzx rax, al
 	push rax
-	call _fib
-	add rsp, 8
-	push rax
+	pop rax
+	cmp rax, 0
+	je lbl1
+	push rbp
+	mov rbp, rsp
 	push QWORD [rsp+24]
-	push 2
+lbl2:
+	push QWORD [rsp+0]
+	push 0
 	pop rbx
 	pop rax
-	sub rax, rbx
+	cmp rax, rbx
+	setg al
+	movzx rax, al
 	push rax
-	call _fib
-	add rsp, 8
+	pop rax
+	cmp rax, 0
+	je lbl3
+	push rbp
+	mov rbp, rsp
+	push QWORD [rsp+8]
+	push 10
+	pop rbx
+	pop rax
+	mov rdx, 0
+	div rbx
+	mov rax, rdx
 	push rax
+	push 48
+	push QWORD [rsp+8]
 	pop rbx
 	pop rax
 	add rax, rbx
 	push rax
+	call _print_char
+	add rsp, 8
+	push QWORD [rsp+16]
+	push 10
+	pop rbx
 	pop rax
-	mov rsp, rbp
-	pop rbp
-	ret
-	mov rsp, rbp
-	pop rbp
-	ret
-global _underscore_test
-_underscore_test:
-	push rbp
-	mov rbp, rsp
-	push 44
+	mov rdx, 0
+	div rbx
+	push rax
 	pop rax
+	mov QWORD [rsp+16], rax
+	mov rsp, rbp
+	pop rbp
+	jmp lbl2
+lbl3:
+	mov rsp, rbp
+	pop rbp
+lbl1:
+	push 10
+	call _print_char
+	add rsp, 8
 	mov rsp, rbp
 	pop rbp
 	ret
 	mov rsp, rbp
 	pop rbp
-	ret
 global _main
 _main:
 	push rbp
 	mov rbp, rsp
-	push 13
-	call _fib
+	push 0
+	push QWORD [rsp+0]
+	call _print_number
 	add rsp, 8
-	push rax
+	push 0
 	pop rax
 	mov rsp, rbp
 	pop rbp
@@ -157,6 +185,8 @@ _main:
 	mov rsp, rbp
 	pop rbp
 	ret
+	mov rsp, rbp
+	pop rbp
 global _start
 _start:
 	call _main
@@ -165,4 +195,3 @@ _start:
 	pop rdi
 	syscall
 section .data
-STR0 db "", 0xa, "", 0

@@ -1,12 +1,15 @@
 #include "lexer.h"
+#include "token.h"
 #include <cctype>
 #include <iostream>
 #include <string>
 #include <vector>
 
 Lexer::Lexer(std::string contents) {
-  this->code  = contents;
-  this->index = 0;
+  this->code   = contents;
+  this->index  = 0;
+  this->line   = 0;
+  this->column = 0;
 }
 
 void Lexer::skipWhitespace() {
@@ -29,7 +32,7 @@ Token Lexer::nextToken() {
       value += this->peek(0);
       this->index++;
     }
-    return {TOKEN_IDENTIFIER, value};
+    return {TOKEN_IDENTIFIER, value, this->line, this->column};
   }
   if (std::isdigit(this->peek(0))) {
     std::string value;
@@ -37,7 +40,7 @@ Token Lexer::nextToken() {
       value += this->peek(0);
       this->index++;
     }
-    return {TOKEN_INTEGER, value};
+    return {TOKEN_INTEGER, value, this->line, this->column};
   }
   if (this->peek(0) == '\"') {
     this->index++;
@@ -57,7 +60,7 @@ Token Lexer::nextToken() {
       this->index++;
     }
     this->index++;
-    return {TOKEN_STRING, value};
+    return {TOKEN_STRING, value, this->line, this->column};
   }
   switch (this->peek(0)) {
   case '(':
@@ -108,6 +111,20 @@ Token Lexer::nextToken() {
       return this->advanceWith(TOKEN_MORE_THAN_EQUALS);
     }
     return this->advanceWith(TOKEN_MORE_THAN);
+  case '|':
+    if (this->peek(1) == '|') {
+      this->index++;
+      return this->advanceWith(TOKEN_PIPE_PIPE);
+    }
+    break;
+  case '&':
+    if (this->peek(1) == '&') {
+      this->index++;
+      return this->advanceWith(TOKEN_AND_AND);
+    }
+    break;
+  case '%':
+    return this->advanceWith(TOKEN_PERCENT);
   case '\0':
     return this->advanceWith(TOKEN_EOF);
   }
@@ -135,7 +152,16 @@ char Lexer::get(int index) {
 
 char Lexer::peek(int offset) { return this->get(this->index + offset); }
 
+void Lexer::advance() {
+  this->index++;
+  this->column++;
+  if (this->peek(0) == '\n') {
+    this->column = 0;
+    this->line++;
+  }
+}
+
 Token Lexer::advanceWith(TokenType type) {
   this->index++;
-  return {type, ""};
+  return {type, "", this->line, this->column};
 }

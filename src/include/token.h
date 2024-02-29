@@ -25,13 +25,16 @@ typedef enum {
   TOKEN_MORE_THAN,
   TOKEN_LESS_THAN_EQUALS,
   TOKEN_MORE_THAN_EQUALS,
+  TOKEN_PIPE_PIPE,
+  TOKEN_AND_AND,
+  TOKEN_PERCENT,
 } TokenType;
 
 typedef struct {
   TokenType type;
   std::string value;
-  // int line;
-  // int column;
+  int line;
+  int column;
 } Token;
 
 std::string printableTokenType(TokenType type);

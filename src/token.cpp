@@ -25,18 +25,21 @@ std::string printableTokenType(TokenType type) {
       "TOKEN_MORE_THAN",
       "TOKEN_LESS_THAN_EQUALS",
       "TOKEN_MORE_THAN_EQUALS",
+      "TOKEN_PIPE_PIPE",
+      "TOKEN_AND_AND",
+      "TOKEN_PERCENT",
   };
   return values[type];
 }
 
 std::string printableToken(Token token) {
   std::string printable = "";
-  // printable += "{ line: ";
-  // printable += token.line;
-  // printable += ", column: ";
-  // printable += token.column;
-  printable += "{ type: ";
-  // printable += ", type: ";
+  printable += "{ line: ";
+  printable += token.line;
+  printable += ", column: ";
+  printable += token.column;
+  // printable += "{ type: ";
+  printable += ", type: ";
   printable += printableTokenType(token.type);
   printable += ", value: " + token.value + " }";
   return printable;

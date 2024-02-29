@@ -1,4 +1,5 @@
 import "include/string.wv";
+import "include/stdlib.wv";
 
 void print(str message) {
 	extern asm "
@@ -14,7 +15,34 @@ void print(str message) {
 ";
 }
 
+void print_char(char c) {
+	extern asm "
+	push QWORD [rsp+16]
+	mov rax, 1
+	mov rdi, 1
+	mov rdx, 1
+	mov rsi, rsp
+	syscall
+	add rsp, 8
+";
+}
+
 void println(str message) {
 	print(message);
-	print("\n");
+	print_char(10);
+}
+
+void print_number(int n) { // TODO: prints backwards
+	if (n < 1) {
+		print_char(48);
+	}
+	if (n > 0) {
+		int number = n;
+		while (number > 0) {
+			int current_digit = number % 10;
+			print_char(48 + current_digit);
+			number = number / 10;
+		}
+	}
+	print_char(10);
 }

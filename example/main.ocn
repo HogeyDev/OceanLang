@@ -1,28 +1,11 @@
 import "include/io.wv";
-import "include/stdlib.wv";
-
-int reassignmentTest(int n) {
-	int returnValue = 69;
-	if (n > 99) {
-		returnValue = 42;
-	}
-	return returnValue;
-}
-
-int fib(int n) {
-	if (n < 3) {
-		return 1;
-	}
-	return fib(n - 1) + fib(n - 2);
-}
-
-int underscore_test() {
-	return 44;
-}
+// import "include/stdlib.wv";
 
 int main() {
-	// return reassignmentTest(14);
-	return fib(13);
-	// return underscore_test();
-	// return 69;
+	int sum = 0;
+	// for (int i = 0; i < 5; i = i + 1) {
+	// 	sum = sum + i;
+	// }
+	print_number(sum);
+	return 0;
 }
