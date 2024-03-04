@@ -78,12 +78,13 @@ _println:
 	mov rsp, rbp
 	pop rbp
 	ret
-global _print_number
-_print_number:
+global _print_int
+_print_int:
 	push rbp
 	mov rbp, rsp
 	push QWORD [rsp+16]
-	push 1
+	push QWORD [rsp+0]
+	push 0
 	pop rbx
 	pop rax
 	cmp rax, rbx
@@ -95,14 +96,22 @@ _print_number:
 	je lbl0
 	push rbp
 	mov rbp, rsp
-	push 48
+	push 45
 	call _print_char
 	add rsp, 8
+	push 0
+	push QWORD [rsp+16]
+	pop rbx
+	pop rax
+	sub rax, rbx
+	push rax
+	pop rax
+	mov QWORD [rsp+8], rax
 	mov rsp, rbp
 	pop rbp
 lbl0:
-	push QWORD [rsp+16]
-	push 0
+	push QWORD [rsp+0]
+	push 9
 	pop rbx
 	pop rax
 	cmp rax, rbx
@@ -114,21 +123,19 @@ lbl0:
 	je lbl1
 	push rbp
 	mov rbp, rsp
-	push QWORD [rsp+24]
-lbl2:
-	push QWORD [rsp+0]
-	push 0
+	push QWORD [rsp+8]
+	push 10
 	pop rbx
 	pop rax
-	cmp rax, rbx
-	setg al
-	movzx rax, al
+	mov rdx, 0
+	div rbx
 	push rax
-	pop rax
-	cmp rax, 0
-	je lbl3
-	push rbp
-	mov rbp, rsp
+	call _print_int
+	add rsp, 8
+	mov rsp, rbp
+	pop rbp
+lbl1:
+	push 48
 	push QWORD [rsp+8]
 	push 10
 	pop rbx
@@ -137,33 +144,19 @@ lbl2:
 	div rbx
 	mov rax, rdx
 	push rax
-	push 48
-	push QWORD [rsp+8]
 	pop rbx
 	pop rax
 	add rax, rbx
 	push rax
 	call _print_char
 	add rsp, 8
-	push QWORD [rsp+16]
-	push 10
-	pop rbx
-	pop rax
-	mov rdx, 0
-	div rbx
-	push rax
-	pop rax
-	mov QWORD [rsp+16], rax
 	mov rsp, rbp
 	pop rbp
-	jmp lbl2
-lbl3:
-	mov rsp, rbp
-	pop rbp
-lbl1:
-	push 10
-	call _print_char
-	add rsp, 8
+	ret
+global _syscall
+_syscall:
+	push rbp
+	mov rbp, rsp
 	mov rsp, rbp
 	pop rbp
 	ret
@@ -173,9 +166,16 @@ global _main
 _main:
 	push rbp
 	mov rbp, rsp
-	push 0
+	push 12
+	mov rax, rsp
+	sub rax,0
+	push rax
+	push 4
+	pop rax
+	neg rax
+	push rax
 	push QWORD [rsp+0]
-	call _print_number
+	call _print_int
 	add rsp, 8
 	push 0
 	pop rax

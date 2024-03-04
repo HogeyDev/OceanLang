@@ -19,6 +19,8 @@ std::string printableTokenType(TokenType type) {
       "TOKEN_STAR",
       "TOKEN_SLASH",
       "TOKEN_BANG",
+      "TOKEN_PIPE",
+      "TOKEN_AMPERSAND",
       "TOKEN_EQUALS_EQUALS",
       "TOKEN_BANG_EQUALS",
       "TOKEN_LESS_THAN",

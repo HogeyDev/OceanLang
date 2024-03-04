@@ -116,13 +116,13 @@ Token Lexer::nextToken() {
       this->index++;
       return this->advanceWith(TOKEN_PIPE_PIPE);
     }
-    break;
+    return this->advanceWith(TOKEN_PIPE);
   case '&':
     if (this->peek(1) == '&') {
       this->index++;
       return this->advanceWith(TOKEN_AND_AND);
     }
-    break;
+    return this->advanceWith(TOKEN_AMPERSAND);
   case '%':
     return this->advanceWith(TOKEN_PERCENT);
   case '\0':

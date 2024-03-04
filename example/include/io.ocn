@@ -1,5 +1,7 @@
-import "include/string.wv";
-import "include/stdlib.wv";
+// #trait include_once
+
+import "include/string.ocn";
+import "include/stdlib.ocn";
 
 void print(str message) {
 	extern asm "
@@ -32,17 +34,19 @@ void println(str message) {
 	print_char(10);
 }
 
-void print_number(int n) { // TODO: prints backwards
-	if (n < 1) {
-		print_char(48);
+void print_int(int num) { // adapted from https://stackoverflow.com/a/32141777
+	int a = num;
+
+	if (a < 0) {
+		print_char(45);
+		a = 0 - a;
 	}
-	if (n > 0) {
-		int number = n;
-		while (number > 0) {
-			int current_digit = number % 10;
-			print_char(48 + current_digit);
-			number = number / 10;
-		}
+
+	if (a > 9) {
+  	print_int(a / 10);
 	}
-	print_char(10);
+
+	print_char(48 + (a % 10));
 }
+
+void syscall(int rax, int rbx, ) {}

@@ -355,14 +355,22 @@ AST::Expression *Parser::factor() {
 }
 
 AST::Expression *Parser::unary() {
-
-  if (this->currTok.type == TOKEN_BANG || this->currTok.type == TOKEN_MINUS) {
+  if (this->currTok.type == TOKEN_AMPERSAND ||
+      this->currTok.type == TOKEN_STAR || this->currTok.type == TOKEN_BANG ||
+      this->currTok.type == TOKEN_MINUS) {
     this->advance();
     AST::BinaryExpression *u = new AST::BinaryExpression();
     if (this->peek(-1).type == TOKEN_MINUS) {
       u->op = OP_NEG;
     } else if (this->peek(-1).type == TOKEN_BANG) {
       u->op = OP_INV;
+    } else if (this->peek(-1).type == TOKEN_AMPERSAND) {
+      AST::VariableReference *v = new AST::VariableReference();
+      v->variableName           = this->currTok.value;
+      this->eat(TOKEN_IDENTIFIER);
+      return v;
+    } else if (this->peek(-1).type == TOKEN_STAR) {
+      u->op = OP_DEREF;
     } else {
       exit(51);
     }

@@ -1,3 +1,5 @@
+// #trait include_once
+
 extern asm "
 _strlen:
 	push rbp

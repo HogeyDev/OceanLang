@@ -90,53 +90,78 @@ std::string FunctionCall::codegen(DefinedScope *scope) {
 }
 
 std::string BinaryExpression::codegen(DefinedScope *scope) {
-  std::string ret = "";
+  std::string ret    = "";
 
-  ret += lhs->codegen(scope);
-  ret += rhs->codegen(scope);
-  ret += scope->pop("rbx"); // rhs -> rbx
+  const bool isUnary = this->rhs == nullptr;
+
+  ret += this->lhs->codegen(scope);
+  if (!isUnary) {
+    ret += this->rhs->codegen(scope);
+    ret += scope->pop("rbx"); // rhs -> rbx
+  }
   ret += scope->pop("rax"); // lhs -> rax
   switch (this->op) {
-  case OP_ADD:
+  case OP_ADD: {
     ret += "\tadd rax, rbx\n";
     break;
-  case OP_SUB:
+  }
+  case OP_SUB: {
     ret += "\tsub rax, rbx\n";
     break;
-  case OP_MUL:
+  }
+  case OP_MUL: {
     ret += "\timul rax, rbx\n";
     break;
-  case OP_DIV:
+  }
+  case OP_DIV: {
     ret += "\tmov rdx, 0\n\tdiv rbx\n";
     break;
-  case OP_MOD:
+  }
+  case OP_MOD: {
     ret += "\tmov rdx, 0\n\tdiv rbx\n\tmov rax, rdx\n";
     break;
+  }
   // case OP_EQ:
   // case OP_NEQ:
-  case OP_LT:
+  case OP_LT: {
     ret += "\tcmp rax, rbx\n\tsetl al\n\tmovzx rax, al\n";
     break;
-  case OP_GT:
+  }
+  case OP_GT: {
     ret += "\tcmp rax, rbx\n\tsetg al\n\tmovzx rax, al\n";
     break;
-  case OP_LTEQ:
+  }
+  case OP_LTEQ: {
     ret += "\tcmp rax, rbx\n\tsetle al\n\tmovzx rax, al\n";
     break;
-  case OP_GTEQ:
+  }
+  case OP_GTEQ: {
     ret += "\tcmp rax, rbx\n\tsetge al\n\tmovzx rax, al\n";
     break;
-  // case OP_NEG: // TODO
+  }
+  case OP_NEG: {
+    ret += "\tneg rax\n";
+    break;
+  }
   // case OP_INV: // TODO
-  case OP_OR:
+  case OP_OR: {
     ret += "\tor rax, rbx\n";
     break;
-  case OP_AND:
+  }
+  case OP_AND: {
     ret += "\tand rax, rbx\n";
     break;
-  default:
-    std::cerr << "Unimplemented op: " << this->op << std::endl;
+  }
+  case OP_DEREF: {
+    ret += "\tmov rbx, rax\n";
+    ret += "\tmov rax, [rbx]\n";
+    break;
+  }
+  default: {
+    std::cerr << "Unimplemented op: " << printableOperation(this->op)
+              << std::endl;
     exit(1);
+  }
   }
   ret += scope->push("rax");
 
@@ -249,10 +274,30 @@ std::string VariableRecall::codegen(DefinedScope *scope) {
   ret += scope->push("QWORD [rsp+" + std::to_string(8 * index) + "]");
   return ret;
 }
+
+std::string VariableReference::codegen(DefinedScope *scope) {
+  std::string ret          = "";
+
+  const int variableOffset = scope->getVariableIndex(this->variableName);
+  ret += "\tmov rax, rsp\n";
+  ret += "\tsub rax," + std::to_string(variableOffset) + "\n";
+  ret += "\tpush rax\n";
+
+  return ret;
+}
 }; // namespace AST
 
 std::string compileToAsm(AST::Scope *root, DefinedScope *scope) {
   DefinedScope *globalScope = scope->newSubScope();
   std::string assembly = "section .text\n" + root->codegen(globalScope) + '\n';
   return assembly;
+}
+
+std::string printableOperation(BinOp op) {
+  std::string values[] = {
+      "OP_ADD", "OP_SUB", "OP_MUL", "OP_DIV",   "OP_MOD",  "OP_EQ",
+      "OP_NEQ", "OP_LT",  "OP_GT",  "OP_LTEQ",  "OP_GTEQ", "OP_NEG",
+      "OP_INV", "OP_OR",  "OP_AND", "OP_DEREF",
+  };
+  return values[op];
 }

@@ -29,6 +29,8 @@ typedef enum {
 
   OP_OR,  // ||
   OP_AND, // &&
+
+  OP_DEREF,
 } BinOp;
 
 namespace AST {
@@ -50,6 +52,8 @@ class While;
 class IntegerLiteral;
 class StringLiteral;
 class VariableRecall;
+class VariableReference;
+class VariableDereference;
 
 class Statement {
 public:
@@ -192,6 +196,15 @@ public:
   std::string codegen(DefinedScope *scope);
 };
 
+class VariableReference : public Expression {
+public:
+  std::string variableName;
+
+  std::string codegen(DefinedScope *scope);
+};
+
 }; // namespace AST
 
 std::string compileToAsm(AST::Scope *root, DefinedScope *scope);
+
+std::string printableOperation(BinOp op);

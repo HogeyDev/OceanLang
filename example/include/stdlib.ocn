@@ -1,3 +1,5 @@
+// #trait include_once
+
 void exit(int code) {
 	extern asm "
 	mov rax, 60
