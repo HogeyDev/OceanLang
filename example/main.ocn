@@ -1,12 +1,9 @@
 import "include/io.ocn";
-
 // import "include/stdlib.ocn";
 
 int main() {
 	int my_number = 12;
-	int sum = &my_number;
-	//print_int(sum);
-	int test = -4;
-	print_int(test);
+	int *my_pointer = &my_number;
+	print_int(*my_pointer);
 	return 0;
 }

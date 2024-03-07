@@ -19,7 +19,8 @@ std::string Scope::codegen(DefinedScope *scope) {
 std::string VariableDeclaration::codegen(DefinedScope *scope) {
   std::string ret = "";
   ret += this->value->codegen(scope);
-  scope->createVariable(this->variableName, this->variableType);
+  scope->createVariable(this->variableName, this->variableType,
+                        this->isPointerType);
   return ret;
 }
 
@@ -54,7 +55,8 @@ std::string FunctionDeclaration::codegen(DefinedScope *scope) {
   for (int i = this->parameters.size() - 1; i >= 0; i--) { // backwards
     // for (unsigned int i = 0; i < this->parameters.size(); i++) {
     AST::Parameter *p = this->parameters.at(i);
-    functionScope->createVariable(p->parameterName, p->parameterType);
+    functionScope->createVariable(p->parameterName, p->parameterType,
+                                  p->isPointerType);
   } // parameters are pushed to stack before call
   functionScope->stackSize++;
   ret += "global _" + this->functionName + '\n';
@@ -192,6 +194,20 @@ std::string Extern::codegen(DefinedScope *scope) {
   std::cerr << "Unimplemented external language: " << this->language
             << std::endl;
   exit(1);
+}
+
+std::string Expect::codegen(DefinedScope *scope) {
+  std::string ret = "";
+  if (this->type == 0) {
+    // function
+    scope->createFunction(this->externalName, this->externalType, {});
+    ret += "\textern _" + this->externalName + "\n";
+  } else if (this->type == 1) {
+    // variable
+    std::cerr << "Unimplemented" << std::endl;
+    exit(99);
+  }
+  return ret;
 }
 
 std::string If::codegen(DefinedScope *scope) {

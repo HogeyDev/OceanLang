@@ -1,4 +1,4 @@
-// #trait include_once
+#trait include_once
 
 void exit(int code) {
 	extern asm "

@@ -47,6 +47,7 @@ class Argument;
 class Return;
 class Import;
 class Extern;
+class Expect;
 class If;
 class While;
 class IntegerLiteral;
@@ -76,6 +77,7 @@ public:
   std::string variableType;
   std::string variableName;
   AST::Expression *value;
+  bool isPointerType;
 
   std::string codegen(DefinedScope *scope);
 };
@@ -92,6 +94,7 @@ class Parameter {
 public:
   std::string parameterType;
   std::string parameterName;
+  bool isPointerType;
 
   std::string codegen();
 };
@@ -102,6 +105,7 @@ public:
   std::string functionName;
   std::vector<AST::Parameter *> parameters;
   AST::Scope *functionBody;
+  bool isPointerType;
 
   std::string codegen(DefinedScope *scope);
 };
@@ -145,6 +149,15 @@ class Extern : public AST::Statement {
 public:
   std::string language;
   std::string source;
+
+  std::string codegen(DefinedScope *scope);
+};
+
+class Expect : public AST::Statement {
+public:
+  std::string externalType;
+  std::string externalName;
+  int type; // function, variable
 
   std::string codegen(DefinedScope *scope);
 };

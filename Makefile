@@ -1,7 +1,8 @@
 CC := g++
-LD := g++
+LD := ld
 CC_FLAGS := -Werror -Wpedantic -Wextra -std=c++20 -g
-LD_FLAGS := 
+LD_FLAGS :=
+NAME := ocean
 SRCDIR := src
 OBJDIR := build/objects
 BUILDDIR := build
@@ -21,10 +22,10 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 
 link: $(OBJS)
 	@printf "LD \t%s\n" $(BUILDDIR)/main
-	@g++ $(OBJDIR)/*.o -o $(BUILDDIR)/main
+	@g++ $(OBJDIR)/*.o -o $(BUILDDIR)/$(NAME)
 
 run:
-	./build/main example/main.ocn
+	./$(BUILDDIR)/$(NAME) example/main.ocn
 
 debugGF:
 	./gf/gf2 --args ./build/main example/main.ocn
@@ -40,7 +41,8 @@ compileAsm:
 runAsm:
 	./example/main
 
-asm: compileAsm runAsm
+# asm: compileAsm runAsm
+asm: runAsm
 
 debugAsm:
 	gdb --args ./example/main

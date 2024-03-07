@@ -1,0 +1,3 @@
+#trait include_once
+
+// expect int printf();

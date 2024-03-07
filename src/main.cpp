@@ -3,17 +3,22 @@
 #include "global.h"
 #include "io.h"
 #include "util.h"
+#include <cstdlib>
 #include <filesystem>
 #include <iostream>
 #include <string>
 
 int main(int argc, char **argv) {
+  const std::string executableName = argv[0];
   if (argc < 2) {
-    std::cerr << "Usage: ./ocean path/to/file.ocn" << std::endl;
+    std::cerr << "Usage: " + executableName + " path/to/file.ocn" << std::endl;
     exit(1);
   }
-  std::string pwd     = std::filesystem::current_path().string();
-  std::string inFile  = pwd + '/' + argv[1];
+  std::string pwd    = std::filesystem::current_path().string();
+  std::string inFile = argv[1];
+  if (argv[1][0] != '/') {
+    std::string inFile = pwd + '/' + argv[1];
+  }
   std::string outFile = "";
   {
     std::vector<std::string> splitSlash = splitString(inFile, '/');
@@ -37,6 +42,20 @@ int main(int argc, char **argv) {
   compiled += "section .text\n";
   compiled = (new AsmSectionGrouper(compiled))->group();
   writeFile(outFile, compiled);
+  std::string binaryFile;
+  {
+    std::vector<std::string> split = splitString(outFile, '.');
+    split.pop_back();
+    binaryFile = joinString(split, ".");
+  }
+  std::system(
+      ("nasm -g -f elf64 " + binaryFile + ".asm -o " + binaryFile + ".o")
+          .c_str());
+  std::system(
+      ("ld -m elf_x86_64 " + binaryFile + ".o -o " + binaryFile).c_str());
+  std::system(("rm " + binaryFile + ".o").c_str());
+  std::system(("rm " + binaryFile + ".asm").c_str());
+
   // interpretFile(inFile);
   return 0;
 }

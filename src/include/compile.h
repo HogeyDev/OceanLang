@@ -7,7 +7,7 @@ typedef struct {
   bool include_once;
 } FileProperties;
 
-FileProperties getFileProperties(std::string code);
+FileProperties getFileProperties(std::string *code);
 void interpret(std::string code);
 void interpretFile(std::string filepath);
 std::string compile(std::string code, DefinedScope *scope);

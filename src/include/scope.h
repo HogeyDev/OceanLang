@@ -5,15 +5,16 @@
 
 class DefinedScope {
 public:
-  std::vector<std::vector<std::string>> variables; // NAME, TYPE, OFFSET
-  std::vector<std::vector<std::string>> *strings;  // NAME, VALUE
+  std::vector<std::vector<std::string>>
+      variables; // NAME, TYPE, OFFSET, IS_POINTER
+  std::vector<std::vector<std::string>> *strings; // NAME, VALUE
   std::vector<std::vector<std::string>>
       *functions; // NAME, TYPE, ARG0_TYPE, ARG1_TYPE ... ARGN_TYPE
   int stackSize;
 
   DefinedScope();
   bool hasVariable(std::string name);
-  void createVariable(std::string name, std::string type);
+  void createVariable(std::string name, std::string type, bool isPointer);
   std::string getVariableType(std::string name);
   int getVariableIndex(std::string name);
   int stringId(std::string value);

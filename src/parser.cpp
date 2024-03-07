@@ -62,7 +62,8 @@ AST::Scope *Parser::scope() {
         this->eat(TOKEN_SEMI);
 
         stmt = ret;
-      } else if (this->peek(1).type == TOKEN_IDENTIFIER) {
+      } else if (this->peek(1).type == TOKEN_IDENTIFIER ||
+                 this->peek(1).type == TOKEN_STAR) {
         // function declaration, variable declaration, return
         if (this->currTok.value == "extern") {
           // extern statement
@@ -79,12 +80,42 @@ AST::Scope *Parser::scope() {
           this->eat(TOKEN_SEMI);
 
           stmt = ext;
-        } else if (this->peek(2).type == TOKEN_LPAREN) {
+        } else if (this->currTok.value == "expect") {
+          AST::Expect *expt = new AST::Expect();
+          this->eat(TOKEN_IDENTIFIER);
+
+          expt->externalType = this->currTok.value;
+          this->eat(TOKEN_IDENTIFIER);
+
+          expt->externalName = this->currTok.value;
+          this->eat(TOKEN_IDENTIFIER);
+
+          if (this->currTok.type == TOKEN_LPAREN) {
+            expt->type = 0;
+            this->eat(TOKEN_LPAREN);
+            this->eat(TOKEN_RPAREN);
+          } else {
+            expt->type = 1;
+          }
+
+          this->eat(TOKEN_SEMI);
+
+          stmt = expt;
+        } else if (this->peek(2).type == TOKEN_LPAREN ||
+                   (this->peek(1).type == TOKEN_STAR &&
+                    this->peek(3).type == TOKEN_LPAREN)) {
           // function declaration
           AST::FunctionDeclaration *funcDecl = new AST::FunctionDeclaration();
 
+          const bool isPointer               = this->peek(1).type == TOKEN_STAR;
+          funcDecl->isPointerType            = isPointer;
+
           funcDecl->functionType             = this->currTok.value;
           this->eat(TOKEN_IDENTIFIER);
+
+          if (isPointer) {
+            this->eat(TOKEN_STAR);
+          }
 
           funcDecl->functionName = this->currTok.value;
           this->eat(TOKEN_IDENTIFIER);
@@ -108,12 +139,21 @@ AST::Scope *Parser::scope() {
           funcDecl->functionBody = this->scope();
 
           stmt                   = funcDecl;
-        } else if (this->peek(2).type == TOKEN_EQUALS) {
+        } else if (this->peek(2).type == TOKEN_EQUALS ||
+                   (this->peek(1).type == TOKEN_STAR &&
+                    this->peek(3).type == TOKEN_EQUALS)) {
           // variable declaration
           AST::VariableDeclaration *varDecl = new AST::VariableDeclaration();
 
+          const bool isPointer              = this->peek(1).type == TOKEN_STAR;
+          varDecl->isPointerType            = isPointer;
+
           varDecl->variableType             = this->currTok.value;
           this->eat(TOKEN_IDENTIFIER);
+
+          if (isPointer) {
+            this->eat(TOKEN_STAR);
+          }
 
           varDecl->variableName = this->currTok.value;
           this->eat(TOKEN_IDENTIFIER);
@@ -422,7 +462,5 @@ AST::Expression *Parser::primary() {
     this->eat(TOKEN_RPAREN);
     return group;
   }
-  std::cerr << "Cannot parse expression: " << printableToken(this->currTok)
-            << std::endl;
-  exit(1);
+  return this->expression();
 }

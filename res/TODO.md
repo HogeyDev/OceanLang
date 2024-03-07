@@ -1,7 +1,4 @@
 [ ] For loops
-[X] Pointers
-    [X] Reference
-    [X] Dereference
 [ ] Type checking
 [ ] Structs
 [ ] Enums
@@ -15,9 +12,9 @@
     [ ] Unary
         [X] -
         [ ] !
-[X] "Recursive operations"
-    [X] number = number / 10;
 [ ] File traits
+    [X] include_once
+    [ ] debug
 [ ] External linking
     [ ] expect printf();
     [ ] expect my_variable;

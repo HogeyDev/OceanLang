@@ -16,13 +16,15 @@ bool DefinedScope::hasVariable(std::string name) {
   return false;
 }
 
-void DefinedScope::createVariable(std::string name, std::string type) {
+void DefinedScope::createVariable(std::string name, std::string type,
+                                  bool isPointer) {
   if (this->hasVariable(name)) {
     std::cerr << "Variable \'" << name << "\' already exists" << std::endl;
     exit(1);
   }
   // this->stackSize++;
-  std::vector<std::string> var = {name, type, std::to_string(this->stackSize)};
+  std::vector<std::string> var = {name, type, std::to_string(this->stackSize),
+                                  isPointer ? "1" : "0"};
   this->variables.push_back(var);
 }
 

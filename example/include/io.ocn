@@ -1,4 +1,4 @@
-// #trait include_once
+#trait include_once
 
 import "include/string.ocn";
 import "include/stdlib.ocn";
